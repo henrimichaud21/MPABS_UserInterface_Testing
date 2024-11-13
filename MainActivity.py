@@ -11,7 +11,8 @@ def setup_toggle_button(button, *other_buttons):
 
             for b in other_buttons:
                 if b != button:
-                    b.setChecked(False)  # Uncheck other buttons
+                    # Uncheck other buttons
+                    b.setChecked(False)
                     b.setStyleSheet("")
 
     button.clicked.connect(toggle_button)
