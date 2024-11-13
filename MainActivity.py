@@ -1,19 +1,19 @@
 import sys
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton
+from PyQt5.QtWidgets import *
 
-def setup_toggle_button(button, *other_buttons):
+def setup_toggle_button(button):
     button.setCheckable(True)
 
     def toggle_button():
         if button.isChecked():
             button.setStyleSheet("background-color: green")
+            button.setText("Stop Recording")
 
-            for b in other_buttons:
-                if b != button:
-                    # Uncheck other buttons
-                    b.setChecked(False)
-                    b.setStyleSheet("")
+        else:
+            button.setChecked(False)
+            button.setStyleSheet("")
+            button.setText("Start Recording Data")
 
     button.clicked.connect(toggle_button)
 
@@ -24,20 +24,60 @@ class MainActivity(QMainWindow):
         self.setGeometry(1200, 300, 750, 750)
         self.setWindowTitle("Microstrip Patch Antenna Home Screen")
 
+        # Create grid layout, row position, column position
+        grid_layout = QGridLayout()
+        central_widget = QWidget(self)
+
+        # Add TextFields
+        self.antennaLabel = QLabel("Antenna 1 Status: ", self)
+        self.antennaLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
+        self.antennaLabel.setFixedSize(200, 30)
+
+        self.solutionLabel = QLabel("Select Solution Type:", self)
+        self.solutionLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
+        self.solutionLabel.setFixedSize(200,30)
+        self.solutionLabel.move(0,30)
+
+        self.connectionLabel = QLabel("Not Connected", self)
+        self.connectionLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
+        self.connectionLabel.setFixedSize(200,30)
+        self.connectionLabel.move(250,0)
+
+
+        # Add checkbox
+        self.connectionCheckbox = QCheckBox("", self)
+        self.connectionCheckbox.setFixedSize(30,30)
+        self.connectionCheckbox.move(200,0)
+
+        # Check connection
+        self.connectionCheckbox.stateChanged.connect(self.check_connection)
+
+
         # Add Push Buttons
-        self.saline_btn = QPushButton("Saline Solution", self)
-        self.saline_btn.setGeometry(100, 100, 150, 50)
+        self.record_btn = QPushButton("Start Recording Data", self)
+        self.record_btn.setFixedSize(200, 50)
+        self.record_btn.move(210, 60)
+        # self.record_btn.clicked.connect(self.change_button)
+        setup_toggle_button(self.record_btn)
 
-        self.distilled_btn = QPushButton("Distilled Solution", self)
-        self.distilled_btn.setGeometry(300, 100, 150, 50)
+        self.solutionDropdown = QComboBox(self)
+        self.solutionDropdown.addItems(["Saline Solution", "Distilled Solution", "Tap Solution"])
+        self.solutionDropdown.setFixedSize(200, 30)
+        self.solutionDropdown.move(0, 60)
+        # grid_layout.addWidget((self.dropdown), 1, 0)
 
-        self.tap_btn = QPushButton("Tap Solution", self)
-        self.tap_btn.setGeometry(500, 100, 150, 50)
+        # central_widget.setLayout(grid_layout)
+        # self.setCentralWidget(central_widget)
 
-        # Set up toggle functionality
-        setup_toggle_button(self.saline_btn, self.distilled_btn, self.tap_btn)
-        setup_toggle_button(self.distilled_btn, self.tap_btn, self.saline_btn)
-        setup_toggle_button(self.tap_btn, self.distilled_btn, self.saline_btn)
+    def check_connection(self):
+        if self.connectionCheckbox.isChecked():
+            self.connectionLabel.setText("Connected")
+        else:
+            self.connectionLabel.setText("Not Connected")
+
+    def change_button(self):
+        self.record_btn.setStyleSheet("background-color: green")
+        self.record_btn.setText("Stop recording data")
 
 app = QApplication(sys.argv)
 win = MainActivity()
