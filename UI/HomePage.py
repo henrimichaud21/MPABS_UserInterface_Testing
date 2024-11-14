@@ -18,7 +18,7 @@ def setup_toggle_button(button, phrase1, phrase2):
 
     button.clicked.connect(toggle_button)
 
-class HomePage(QMainWindow):
+class HomePage(QWidget):
     def __init__(self):
         # Create Window
         super().__init__()
@@ -26,11 +26,11 @@ class HomePage(QMainWindow):
         self.setWindowTitle("Microstrip Patch Antenna Home Screen")
 
         # Create grid layout, row position, column position
-        central_widget = QWidget(self)
-        self.setCentralWidget(central_widget)
+        # central_widget = QWidget(self)
+        # self.setCentralWidget(central_widget)
 
         # Grid layout
-        grid_layout = QGridLayout(central_widget)
+        # grid_layout = QGridLayout(central_widget)
 
         # Create VBox Layout
         hbox00 = QHBoxLayout()
