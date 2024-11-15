@@ -1,6 +1,8 @@
 import sys
+import csv
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QDir
 from UI.ReferencePointPage import ReferencePointPage
 
 class FullDataPage(QWidget):
@@ -25,6 +27,7 @@ class FullDataPage(QWidget):
         self.exportData_btn = QPushButton("Export Data", self)
         self.exportData_btn.setFixedSize(125, 50)
         self.exportData_btn.move(425, 10)
+        self.exportData_btn.clicked.connect(self.export_Table)
         # hbox01.addWidget((self.dataPage_btn))
 
         # Enter Reference Point Button
@@ -51,6 +54,36 @@ class FullDataPage(QWidget):
             ("15:00", "-1"),
             ("16:00", "-2"),
         ]
+
+        if self.table.rowCount() < len(mock_data):
+            self.table.setRowCount(len(mock_data))
+
         for row, (time, difference) in enumerate(mock_data):
             self.table.setItem(row, 0, QTableWidgetItem(time))
             self.table.setItem(row, 1, QTableWidgetItem(difference))
+
+    def export_Table(self):
+        path, _= QFileDialog.getSaveFileName(self, 'Save File', QDir.homePath() + "/export.csv", "CSV Files(*.csv *.txt)")
+        if path:
+            with open(path, 'w') as stream:
+                print("saving", path)
+                writer = csv.writer(stream, dialect='excel', delimiter= ',')
+                headers = []
+
+                for column in range(self.table.columnCount()):
+                    header = self.table.horizontalHeaderItem(column)
+                    if header:
+                        headers.append(header.text())
+                    else:
+                        headers.append(f"Column {column}")
+                writer.writerow(headers)
+
+                for row in range(self.table.rowCount()):
+                    rowData = []
+                    for column in range(self.table.columnCount()):
+                        item = self.table.item(row, column)
+                        if item is not None:
+                            rowData.append(item.text())
+                        else:
+                            rowData.append('')
+                    writer.writerow(rowData)
