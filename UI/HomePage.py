@@ -3,6 +3,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from UI.FullDataPage import FullDataPage
 from UI.ReferencePointPage import ReferencePointPage
+from Threading.SerialThread import SerialThread
 
 def setup_toggle_button(button, phrase1, phrase2):
     button.setCheckable(True)
@@ -119,10 +120,18 @@ class HomePage(QWidget):
         # Create a current reference point
         self.current_reference_point = "xx"
 
+        # Start Serial Communication
+        self.serial_thread = SeiralThread("COM3", 9600)
+        self.serial_thread.data_received.connect(self.update_checkbox)
+        self.thread = threading.Thread(target=self.serial_thread.run)
+        self.thread.start()
+
     def check_connection(self):
-        if self.connectionCheckbox.isChecked():
+        if data == "PRESSED":
+            self.connectionCheckbox.setChecked(True)
             self.connectionLabel.setText("Connected")
-        else:
+        elif data == "RELEASED:
+            self.connectionCheckbox.setChecked(False)
             self.connectionLabel.setText("Not Connected")
     
     def open_data_page(self):
@@ -133,7 +142,3 @@ class HomePage(QWidget):
         self.referencepoint_btn = ReferencePointPage()
         self.referencepoint_btn.referenceChanged.connect(self.update_reference_label)
         self.referencepoint_btn.show()
-    
-    def update_reference_label(self, value):
-        self.current_reference_point = value
-        self.currentReferenceLabel.setText(f"Current Reference Point: {value} cm")
