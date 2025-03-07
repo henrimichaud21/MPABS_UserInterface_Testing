@@ -13,7 +13,7 @@ class FullDataPage(QWidget):
         self.setWindowTitle("Microstrip Patch Antenna Full Data Page")
 
         self.table = QTableWidget(self)
-        self.table.setRowCount(10)
+        self.table.setRowCount(0)
         self.table.setColumnCount(2)
         self.table.setFixedSize(500, 600)
         self.table.move(50,75)
@@ -41,6 +41,7 @@ class FullDataPage(QWidget):
         self.table.insertRow(row_count) #Add new row
         self.table.setItem(row_count, 0, QTableWidgetItem(datetime.now().strftime("%H:%M:%S")))
         self.table.setItem(row_count, 1, QTableWidgetItem(str(water_level)))
+        self.table.scrollToBottom()
 
     def open_reference_page(self):
         self.referencepoint_btn = ReferencePointPage()
