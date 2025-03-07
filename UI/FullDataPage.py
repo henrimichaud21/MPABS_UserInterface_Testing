@@ -4,9 +4,10 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QDir
 from UI.ReferencePointPage import ReferencePointPage
+from datetime import datetime
 
 class FullDataPage(QWidget):
-    def __init__(self, reference_point):
+    def __init__(self, reference_point, serial_thread):
         super().__init__()
         self.setGeometry(1000, 100, 600, 700)
         self.setWindowTitle("Microstrip Patch Antenna Full Data Page")
@@ -21,7 +22,7 @@ class FullDataPage(QWidget):
         self.table.setColumnWidth(1, 400)
 
         # Add data
-        self.add_data()
+        # self.add_data()
 
         # Add Export to CSV Button
         self.exportData_btn = QPushButton("Export Data", self)
@@ -42,25 +43,34 @@ class FullDataPage(QWidget):
         self.currentReferenceLabel.setFixedSize(275,30)
         self.currentReferenceLabel.move(50,20)
 
+        self.serial_thread = serial_thread
+        self.serial_thread.data_received.connect(self.update_table)
+
+    def update_table(self, water_level):
+        row_count = self.table.rowCount()
+        self.table.insertRow(row_count) #Add new row
+        self.table.setItem(row_count, 0, QTableWidgetItem(datetime.now().strftime("%H:%M:%S")))
+        self.table.setItem(row_count, 1, QTableWidgetItem(str(water_level)))
+
     def open_reference_page(self):
         self.referencepoint_btn = ReferencePointPage()
         self.referencepoint_btn.show()
 
-    def add_data(self):
-        mock_data = [
-            ("12:00", "0"),
-            ("13:00", "1"),
-            ("14:00", "0"),
-            ("15:00", "-1"),
-            ("16:00", "-2"),
-        ]
+    # def add_data(self):
+    #     mock_data = [
+    #         ("12:00", "0"),
+    #         ("13:00", "1"),
+    #         ("14:00", "0"),
+    #         ("15:00", "-1"),
+    #         ("16:00", "-2"),
+    #     ]
 
-        if self.table.rowCount() < len(mock_data):
-            self.table.setRowCount(len(mock_data))
+    #     if self.table.rowCount() < len(mock_data):
+    #         self.table.setRowCount(len(mock_data))
 
-        for row, (time, difference) in enumerate(mock_data):
-            self.table.setItem(row, 0, QTableWidgetItem(time))
-            self.table.setItem(row, 1, QTableWidgetItem(difference))
+    #     for row, (time, difference) in enumerate(mock_data):
+    #         self.table.setItem(row, 0, QTableWidgetItem(time))
+    #         self.table.setItem(row, 1, QTableWidgetItem(difference))
 
     def export_Table(self):
         path, _= QFileDialog.getSaveFileName(self, 'Save File', QDir.homePath() + "/export.csv", "CSV Files(*.csv *.txt)")

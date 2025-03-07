@@ -1,4 +1,5 @@
 import sys
+import threading
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from UI.FullDataPage import FullDataPage
@@ -74,7 +75,7 @@ class HomePage(QWidget):
         # hbox00.addWidget((self.connectionCheckbox))
 
         # Check connection
-        self.connectionCheckbox.stateChanged.connect(self.check_connection)
+        # self.connectionCheckbox.stateChanged.connect(self.check_connection)
 
         # Add Record Button
         self.record_btn = QPushButton("Start Recording Data", self)
@@ -121,21 +122,21 @@ class HomePage(QWidget):
         self.current_reference_point = "xx"
 
         # Start Serial Communication
-        self.serial_thread = SeiralThread("COM3", 9600)
+        self.serial_thread = SerialThread(9600)
         self.serial_thread.data_received.connect(self.update_checkbox)
         self.thread = threading.Thread(target=self.serial_thread.run)
         self.thread.start()
 
-    def check_connection(self):
-        if data == "PRESSED":
+    def update_checkbox(self, data):
+        if data == b'\x41':
             self.connectionCheckbox.setChecked(True)
             self.connectionLabel.setText("Connected")
-        elif data == "RELEASED:
+        elif data == b'\x42':
             self.connectionCheckbox.setChecked(False)
             self.connectionLabel.setText("Not Connected")
     
     def open_data_page(self):
-        self.dataPage_btn = FullDataPage(self.current_reference_point)
+        self.dataPage_btn = FullDataPage(self.current_reference_point, self.serial_thread)
         self.dataPage_btn.show()
     
     def open_reference_page(self):
