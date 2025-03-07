@@ -7,7 +7,7 @@ from UI.ReferencePointPage import ReferencePointPage
 from datetime import datetime
 
 class FullDataPage(QWidget):
-    def __init__(self, reference_point, serial_thread):
+    def __init__(self, reference_point):
         super().__init__()
         self.setGeometry(1000, 100, 600, 700)
         self.setWindowTitle("Microstrip Patch Antenna Full Data Page")
@@ -21,21 +21,11 @@ class FullDataPage(QWidget):
         self.table.setColumnWidth(0, 100)
         self.table.setColumnWidth(1, 400)
 
-        # Add data
-        # self.add_data()
-
         # Add Export to CSV Button
         self.exportData_btn = QPushButton("Export Data", self)
         self.exportData_btn.setFixedSize(125, 50)
         self.exportData_btn.move(425, 10)
         self.exportData_btn.clicked.connect(self.export_Table)
-        # hbox01.addWidget((self.dataPage_btn))
-
-        # Enter Reference Point Button
-        # self.referencepoint_btn = QPushButton("Enter Reference Point", self)
-        # self.referencepoint_btn.setFixedSize(175, 50)
-        # self.referencepoint_btn.move(135, 10)
-        # self.referencepoint_btn.clicked.connect(self.open_reference_page)
 
         # Reference Point Label
         self.currentReferenceLabel = QLabel(f"Current Reference Point: {reference_point} cm", self)
@@ -43,8 +33,8 @@ class FullDataPage(QWidget):
         self.currentReferenceLabel.setFixedSize(275,30)
         self.currentReferenceLabel.move(50,20)
 
-        self.serial_thread = serial_thread
-        self.serial_thread.data_received.connect(self.update_table)
+        # self.serial_thread = serial_thread
+        # self.serial_thread.data_received.connect(self.update_table)
 
     def update_table(self, water_level):
         row_count = self.table.rowCount()

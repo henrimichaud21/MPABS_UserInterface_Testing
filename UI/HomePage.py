@@ -6,18 +6,20 @@ from UI.FullDataPage import FullDataPage
 from UI.ReferencePointPage import ReferencePointPage
 from Threading.SerialThread import SerialThread
 
-def setup_toggle_button(button, phrase1, phrase2):
+def setup_toggle_button(button, phrase1, phrase2, home_page_instance):
     button.setCheckable(True)
 
     def toggle_button():
         if button.isChecked():
             button.setStyleSheet("background-color: green")
             button.setText(phrase1)
+            home_page_instance.start_serial_thread()
 
         else:
             button.setChecked(False)
             button.setStyleSheet("")
             button.setText(phrase2)
+            home_page_instance.stop_serial_thread()
 
     button.clicked.connect(toggle_button)
 
@@ -27,13 +29,6 @@ class HomePage(QWidget):
         super().__init__()
         self.setGeometry(1200, 300, 750, 750)
         self.setWindowTitle("Microstrip Patch Antenna Home Screen")
-
-        # Create grid layout, row position, column position
-        # central_widget = QWidget(self)
-        # self.setCentralWidget(central_widget)
-
-        # Grid layout
-        # grid_layout = QGridLayout(central_widget)
 
         # Create VBox Layout
         hbox00 = QHBoxLayout()
@@ -81,30 +76,19 @@ class HomePage(QWidget):
         self.record_btn = QPushButton("Start Recording Data", self)
         self.record_btn.setFixedSize(200, 50)
         self.record_btn.move(220, 150)
-        # hbox01.addWidget((self.record_btn))
-        setup_toggle_button(self.record_btn, "Stop Recording Data", "Start Recording Data")
+        setup_toggle_button(self.record_btn, "Stop Recording Data", "Start Recording Data", self)
 
         # Add View Full Data Button
         self.dataPage_btn = QPushButton("View Full Data", self)
         self.dataPage_btn.setFixedSize(200, 50)
         self.dataPage_btn.move(430, 150)
-        # hbox01.addWidget((self.dataPage_btn))
         self.dataPage_btn.clicked.connect(self.open_data_page)
-
 
         # Dropdown
         self.solutionDropdown = QComboBox(self)
         self.solutionDropdown.addItems(["Saline Solution", "Distilled Solution", "Tap Solution"])
         self.solutionDropdown.setFixedSize(200, 50)
         self.solutionDropdown.move(10, 150)
-        # hbox01.addWidget((self.solutionDropdown))
-        # grid_layout.addWidget((self.dropdown), 1, 0)
-
-        # grid_layout.addLayout(hbox00, 0, 0)
-        # grid_layout.addLayout(hbox01, 1, 0)
-
-        # central_widget.setLayout(grid_layout)
-        # self.setCentralWidget(central_widget)
 
         # Enter Reference Point Button
         self.referencepoint_btn = QPushButton("Enter Reference Point", self)
@@ -122,10 +106,12 @@ class HomePage(QWidget):
         self.current_reference_point = "xx"
 
         # Start Serial Communication
-        self.serial_thread = SerialThread(9600)
-        self.serial_thread.data_received.connect(self.update_checkbox)
-        self.thread = threading.Thread(target=self.serial_thread.run)
-        self.thread.start()
+        self.serial_thread = None
+        self.thread = None
+        # self.is_recording = False
+
+        # Initialize FullDataPage
+        self.full_data_page = None
 
     def update_checkbox(self, data):
         if data == b'\x41':
@@ -136,10 +122,33 @@ class HomePage(QWidget):
             self.connectionLabel.setText("Not Connected")
     
     def open_data_page(self):
-        self.dataPage_btn = FullDataPage(self.current_reference_point, self.serial_thread)
-        self.dataPage_btn.show()
+        self.full_data_page = FullDataPage(self.current_reference_point)
+        self.full_data_page.show()
+
+    def update_table(self, water_level):
+        if self.full_data_page:
+            self.full_data_page.update_table(water_level)
+
+    def update_full_data_page(self, water_level):
+        if self.full_data_page:
+            self.full_data_page.update_table(water_level)
     
     def open_reference_page(self):
         self.referencepoint_btn = ReferencePointPage()
         self.referencepoint_btn.referenceChanged.connect(self.update_reference_label)
         self.referencepoint_btn.show()
+
+    def start_serial_thread(self):
+        if self.serial_thread is None:
+            self.serial_thread = True
+            self.serial_thread = SerialThread()
+            self.serial_thread.data_received.connect(self.update_table)
+            self.thread = threading.Thread(target=self.serial_thread.run)
+            self.thread.start()
+
+    def stop_serial_thread(self):
+        if self.serial_thread:
+            self.serial_thread.stop()
+            self.thread.join()
+            self.serial_thread = None
+            self.thread = None
