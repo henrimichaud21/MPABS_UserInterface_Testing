@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 class ReferencePointPage(QWidget):
 
     referenceChanged = pyqtSignal(str)
-    def __init__(self):
+    def __init__(self, current_reference="0"):
         super().__init__()
         self.setGeometry(1000, 100, 250, 150)
         self.setWindowTitle("Change Reference Point Page")
@@ -44,9 +44,11 @@ class ReferencePointPage(QWidget):
 
     def apply_action(self):
         input_value = self.input_field.text()
-        if input_value:
-            self.referenceChanged.emit(input_value)
-        self.close()  # Close the page
+        if input_value.isdigit():  # Ensure input is a valid number
+            self.referenceChanged.emit(str(int(input_value)))  # Convert to int, then back to string for signal
+        else:
+            QMessageBox.warning(self, "Invalid Input", "Please enter a valid number.")
+        self.close()
 
     def cancel_action(self):
         # Handle Cancel button click

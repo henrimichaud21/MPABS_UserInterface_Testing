@@ -97,7 +97,8 @@ class HomePage(QWidget):
         self.referencepoint_btn.clicked.connect(self.open_reference_page)
 
         # Reference Point Label
-        self.currentReferenceLabel = QLabel("Current Reference Point: xx cm", self)
+        self.current_reference_point = "0"
+        self.currentReferenceLabel = QLabel(f"Current Reference Point: {self.current_reference_point} cm", self)
         self.currentReferenceLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.currentReferenceLabel.setFixedSize(275,30)
         self.currentReferenceLabel.move(195,65)
@@ -111,7 +112,10 @@ class HomePage(QWidget):
         # self.is_recording = False
 
         # Initialize FullDataPage
-        self.full_data_page = None
+        # self.full_data_page = None
+
+        self.full_data_page = FullDataPage(self.current_reference_point)
+
 
     def update_checkbox(self, data):
         if data == b'\x41':
@@ -131,12 +135,19 @@ class HomePage(QWidget):
 
     def update_full_data_page(self, water_level):
         if self.full_data_page:
-            self.full_data_page.update_table(water_level)
+            self.full_data_page.update_table(water_level) 
     
     def open_reference_page(self):
-        self.referencepoint_btn = ReferencePointPage()
+        self.referencepoint_btn = ReferencePointPage(self.current_reference_point)
         self.referencepoint_btn.referenceChanged.connect(self.update_reference_label)
         self.referencepoint_btn.show()
+
+    def update_reference_label(self, new_reference):
+        self.current_reference_point = int(new_reference)
+        self.currentReferenceLabel.setText(f"Current Reference Point: {self.current_reference_point} cm")
+        if self.full_data_page:
+            self.full_data_page.current_reference_point = self.current_reference_point
+            self.full_data_page.update_reference_label()
 
     def start_serial_thread(self):
         if self.serial_thread is None:

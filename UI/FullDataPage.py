@@ -17,7 +17,7 @@ class FullDataPage(QWidget):
         self.table.setColumnCount(2)
         self.table.setFixedSize(500, 600)
         self.table.move(50,75)
-        self.table.setHorizontalHeaderLabels(["Time", "Difference From Reference Point (cm)"])
+        self.table.setHorizontalHeaderLabels(["Time", "Water Level (cm)"])
         self.table.setColumnWidth(0, 100)
         self.table.setColumnWidth(1, 400)
 
@@ -28,13 +28,11 @@ class FullDataPage(QWidget):
         self.exportData_btn.clicked.connect(self.export_Table)
 
         # Reference Point Label
-        self.currentReferenceLabel = QLabel(f"Current Reference Point: {reference_point} cm", self)
+        self.current_reference_point = "0" 
+        self.currentReferenceLabel = QLabel(f"Current Reference Point: {self.current_reference_point} cm", self)
         self.currentReferenceLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.currentReferenceLabel.setFixedSize(275,30)
         self.currentReferenceLabel.move(50,20)
-
-        # self.serial_thread = serial_thread
-        # self.serial_thread.data_received.connect(self.update_table)
 
     def update_table(self, water_level):
         row_count = self.table.rowCount()
@@ -47,21 +45,8 @@ class FullDataPage(QWidget):
         self.referencepoint_btn = ReferencePointPage()
         self.referencepoint_btn.show()
 
-    # def add_data(self):
-    #     mock_data = [
-    #         ("12:00", "0"),
-    #         ("13:00", "1"),
-    #         ("14:00", "0"),
-    #         ("15:00", "-1"),
-    #         ("16:00", "-2"),
-    #     ]
-
-    #     if self.table.rowCount() < len(mock_data):
-    #         self.table.setRowCount(len(mock_data))
-
-    #     for row, (time, difference) in enumerate(mock_data):
-    #         self.table.setItem(row, 0, QTableWidgetItem(time))
-    #         self.table.setItem(row, 1, QTableWidgetItem(difference))
+    def update_reference_label(self):
+        self.currentReferenceLabel.setText(f"Current Reference Point: {self.current_reference_point} cm")
 
     def export_Table(self):
         path, _= QFileDialog.getSaveFileName(self, 'Save File', QDir.homePath() + "/export.csv", "CSV Files(*.csv *.txt)")
