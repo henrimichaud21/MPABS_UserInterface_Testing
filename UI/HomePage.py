@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from UI.FullDataPage import FullDataPage
 from UI.ReferencePointPage import ReferencePointPage
 from Threading.SerialThread import SerialThread
+from datetime import datetime
 
 def setup_toggle_button(button, phrase1, phrase2, home_page_instance):
     button.setCheckable(True)
@@ -116,6 +117,8 @@ class HomePage(QWidget):
 
         self.full_data_page = FullDataPage(self.current_reference_point)
 
+        self.recorded_data = []
+
 
     def update_checkbox(self, data):
         if data == b'\x41':
@@ -129,7 +132,11 @@ class HomePage(QWidget):
         self.full_data_page = FullDataPage(self.current_reference_point)
         self.full_data_page.show()
 
+        for entry in self.recorded_data:
+            self.full_data_page.update_table(entry[1]) 
+
     def update_table(self, water_level):
+        self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), water_level))
         if self.full_data_page:
             self.full_data_page.update_table(water_level)
 

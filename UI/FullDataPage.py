@@ -27,16 +27,22 @@ class FullDataPage(QWidget):
         self.exportData_btn.move(425, 10)
         self.exportData_btn.clicked.connect(self.export_Table)
 
+        # Add Clear Data Button
+        self.clearData_btn = QPushButton("Clear Data", self)
+        self.clearData_btn.setFixedSize(125, 50)
+        self.clearData_btn.move(300, 10)
+        self.clearData_btn.clicked.connect(self.clear_table)
+
         # Reference Point Label
         self.current_reference_point = "0" 
-        self.currentReferenceLabel = QLabel(f"Current Reference Point: {self.current_reference_point} cm", self)
+        self.currentReferenceLabel = QLabel(f"Reference Point: {self.current_reference_point} cm", self)
         self.currentReferenceLabel.setStyleSheet("font-size: 16px; font-weight: bold;")
         self.currentReferenceLabel.setFixedSize(275,30)
         self.currentReferenceLabel.move(50,20)
 
     def update_table(self, water_level):
         row_count = self.table.rowCount()
-        self.table.insertRow(row_count) #Add new row
+        self.table.insertRow(row_count)
         self.table.setItem(row_count, 0, QTableWidgetItem(datetime.now().strftime("%H:%M:%S")))
         self.table.setItem(row_count, 1, QTableWidgetItem(str(water_level)))
         self.table.scrollToBottom()
@@ -46,7 +52,10 @@ class FullDataPage(QWidget):
         self.referencepoint_btn.show()
 
     def update_reference_label(self):
-        self.currentReferenceLabel.setText(f"Current Reference Point: {self.current_reference_point} cm")
+        self.currentReferenceLabel.setText(f"Reference Point: {self.current_reference_point} cm")
+
+    def clear_table(self):
+        self.table.setRowCount(0)
 
     def export_Table(self):
         path, _= QFileDialog.getSaveFileName(self, 'Save File', QDir.homePath() + "/export.csv", "CSV Files(*.csv *.txt)")

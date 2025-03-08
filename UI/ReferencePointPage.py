@@ -18,7 +18,6 @@ class ReferencePointPage(QWidget):
         self.referenceLabel.move(10,10)
 
         # Create input field and "cm" label
-        
         self.input_field = QLineEdit(self)
         self.input_field.setPlaceholderText("Enter value")
         self.input_field.setFixedSize(100, 30)
