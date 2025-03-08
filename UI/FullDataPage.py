@@ -5,8 +5,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QDir
 from UI.ReferencePointPage import ReferencePointPage
 from datetime import datetime
+from PyQt5.QtCore import pyqtSignal
 
 class FullDataPage(QWidget):
+    stop_recording_signal = pyqtSignal(bool)
     def __init__(self, reference_point):
         super().__init__()
         self.setGeometry(1000, 100, 600, 700)
@@ -33,6 +35,14 @@ class FullDataPage(QWidget):
         self.clearData_btn.move(300, 10)
         self.clearData_btn.clicked.connect(self.clear_table)
 
+        # Stop/Resume Recording Button
+        self.toggleRecording_btn = QPushButton("Stop", self)
+        self.toggleRecording_btn.setFixedSize(125, 50)
+        self.toggleRecording_btn.move(175, 75)
+        self.toggleRecording_btn.clicked.connect(self.toggle_recording)
+
+        self.is_recording = True
+
         # Reference Point Label
         self.current_reference_point = "0" 
         self.currentReferenceLabel = QLabel(f"Reference Point: {self.current_reference_point} cm", self)
@@ -56,6 +66,26 @@ class FullDataPage(QWidget):
 
     def clear_table(self):
         self.table.setRowCount(0)
+
+    def toggle_recording(self):
+        if self.is_recording:
+            self.toggleRecording_btn.setText("Resume")
+            self.stop_recording_signal.emit(False)
+        else:
+            self.toggleRecording_btn.setText("Stop") 
+            self.stop_recording_signal.emit(True)
+        self.stop_recording_signal.emit(self.is_recording)
+    
+    def update_toggle_recording_state(self, is_recording):
+        if is_recording:
+            self.toggleRecording_btn.setText("Stop")
+        else:
+            self.toggleRecording_btn.setText("Resume")
+
+    def sync_toggle_button(self, is_recording):
+        self.is_recording = is_recording
+        self.toggleRecording_btn.setChecked(is_recording)
+        self.toggleRecording_btn.setText("Stop" if is_recording else "Resume")
 
     def export_Table(self):
         path, _= QFileDialog.getSaveFileName(self, 'Save File', QDir.homePath() + "/export.csv", "CSV Files(*.csv *.txt)")

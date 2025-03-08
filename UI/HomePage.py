@@ -6,6 +6,7 @@ from UI.FullDataPage import FullDataPage
 from UI.ReferencePointPage import ReferencePointPage
 from Threading.SerialThread import SerialThread
 from datetime import datetime
+from PyQt5.QtCore import pyqtSignal
 
 def setup_toggle_button(button, phrase1, phrase2, home_page_instance):
     button.setCheckable(True)
@@ -22,9 +23,13 @@ def setup_toggle_button(button, phrase1, phrase2, home_page_instance):
             button.setText(phrase2)
             home_page_instance.stop_serial_thread()
 
+        if button == home_page_instance.record_btn:
+            home_page_instance.full_data_page.sync_toggle_button(button.isChecked())
+
     button.clicked.connect(toggle_button)
 
 class HomePage(QWidget):
+    update_toggle_button_signal = pyqtSignal(bool)
     def __init__(self):
         # Create Window
         super().__init__()
@@ -104,9 +109,6 @@ class HomePage(QWidget):
         self.currentReferenceLabel.setFixedSize(275,30)
         self.currentReferenceLabel.move(195,65)
 
-        # Create a current reference point
-        self.current_reference_point = "xx"
-
         # Start Serial Communication
         self.serial_thread = None
         self.thread = None
@@ -116,9 +118,29 @@ class HomePage(QWidget):
         # self.full_data_page = None
 
         self.full_data_page = FullDataPage(self.current_reference_point)
+        self.full_data_page.stop_recording_signal.connect(self.handle_stop_recording)
+        # self.update_toggle_button_signal.connect(self.full_data_page.update_toggle_recording_state)
 
         self.recorded_data = []
 
+    def handle_stop_recording(self, is_recording):
+        if not is_recording:
+            self.record_btn.setText("Start Recording Data")
+            self.record_btn.setChecked(False)
+            self.record_btn.setStyleSheet("")
+            self.stop_serial_thread()
+        else:
+            self.record_btn.setText("Stop Recording Data")
+            self.record_btn.setStyleSheet("background-color: green")
+            self.record_btn.setChecked(True)
+            self.start_serial_thread()
+
+        if self.full_data_page:
+            self.full_data_page.sync_toggle_button(is_recording)
+
+    def handle_record_button_change(self):
+        is_recording = self.record_btn.text() == "Stop"  # Check the current state of the record button
+        self.update_toggle_button_signal.emit(is_recording)  # Emit the signal to FullDataPage
 
     def update_checkbox(self, data):
         if data == b'\x41':
@@ -129,7 +151,9 @@ class HomePage(QWidget):
             self.connectionLabel.setText("Not Connected")
     
     def open_data_page(self):
-        self.full_data_page = FullDataPage(self.current_reference_point)
+        if not self.full_data_page:
+            self.full_data_page = FullDataPage(self.current_reference_point)
+            self.full_data_page.stop_recording_signal.connect(self.handle_stop_recording)  # <--- Connected signal here
         self.full_data_page.show()
 
         for entry in self.recorded_data:
