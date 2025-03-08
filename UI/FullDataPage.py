@@ -11,34 +11,34 @@ class FullDataPage(QWidget):
     stop_recording_signal = pyqtSignal(bool)
     def __init__(self, reference_point):
         super().__init__()
-        self.setGeometry(1000, 100, 600, 700)
+        self.setGeometry(1000, 100, 700, 700)
         self.setWindowTitle("Microstrip Patch Antenna Full Data Page")
 
         self.table = QTableWidget(self)
         self.table.setRowCount(0)
         self.table.setColumnCount(2)
-        self.table.setFixedSize(500, 600)
+        self.table.setFixedSize(600, 600)
         self.table.move(50,75)
         self.table.setHorizontalHeaderLabels(["Time", "Water Level (cm)"])
-        self.table.setColumnWidth(0, 100)
-        self.table.setColumnWidth(1, 400)
+        self.table.setColumnWidth(0, 150)
+        self.table.setColumnWidth(1, 450)
 
         # Add Export to CSV Button
         self.exportData_btn = QPushButton("Export Data", self)
         self.exportData_btn.setFixedSize(125, 50)
-        self.exportData_btn.move(425, 10)
+        self.exportData_btn.move(525, 10)
         self.exportData_btn.clicked.connect(self.export_Table)
 
         # Add Clear Data Button
         self.clearData_btn = QPushButton("Clear Data", self)
         self.clearData_btn.setFixedSize(125, 50)
-        self.clearData_btn.move(300, 10)
+        self.clearData_btn.move(400, 10)
         self.clearData_btn.clicked.connect(self.clear_table)
 
         # Stop/Resume Recording Button
         self.toggleRecording_btn = QPushButton("Stop", self)
         self.toggleRecording_btn.setFixedSize(125, 50)
-        self.toggleRecording_btn.move(175, 75)
+        self.toggleRecording_btn.move(275, 10)
         self.toggleRecording_btn.clicked.connect(self.toggle_recording)
 
         self.is_recording = True
