@@ -2,7 +2,7 @@ import serial
 from PyQt5.QtCore import *
 
 class SerialThread(QObject):
-    data_received = pyqtSignal(int)
+    data_received = pyqtSignal(float, float)
 
     def __init__(self, baudrate=9600):
         super().__init__()
@@ -13,15 +13,23 @@ class SerialThread(QObject):
 
     def run(self):
         try:
-            self.serial_connection = serial.Serial(self.port, self.baudrate, timeout = 1)
+            self.serial_connection = serial.Serial(self.port, self.baudrate, timeout=1)
             while self.running:
-                value = None  # Ensure `value` is initialized first
-                if self.serial_connection.in_waiting > 0:
-                    data = self.serial_connection.read(1) # read 1 byte
-                    value = int.from_bytes(data, "big") # convert to integer
+                phase_voltage = None
+                gain_voltage = None
                 
-                if value is not None and value % 2 == 0:
-                    self.data_received.emit(value // 2) #Send processed data to UI
+                if self.serial_connection.in_waiting >= 4:  # 32-bit data
+                    data = self.serial_connection.read(4)  # Read 4 bytes (32 bits)
+                    phase_value = int.from_bytes(data[:2], "big")  # First 16 bits
+                    gain_value = int.from_bytes(data[2:], "big")  # Last 16 bits
+
+                    # Convert to voltage
+                    phase_voltage = round((phase_value * 3.3) / 4096, 3)
+                    gain_voltage = round((gain_value * 3.3) / 4096, 3)
+
+                    # Emit both values
+                    self.data_received.emit(phase_voltage, gain_voltage)
+
         except serial.SerialException as e:
             print(f"Serial error: {e}")
         finally:

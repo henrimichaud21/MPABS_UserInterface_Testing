@@ -119,7 +119,6 @@ class HomePage(QWidget):
 
         self.full_data_page = FullDataPage(self.current_reference_point)
         self.full_data_page.stop_recording_signal.connect(self.handle_stop_recording)
-        # self.update_toggle_button_signal.connect(self.full_data_page.update_toggle_recording_state)
 
         self.recorded_data = []
 
@@ -153,16 +152,16 @@ class HomePage(QWidget):
     def open_data_page(self):
         if not self.full_data_page:
             self.full_data_page = FullDataPage(self.current_reference_point)
-            self.full_data_page.stop_recording_signal.connect(self.handle_stop_recording)  # <--- Connected signal here
+            self.full_data_page.stop_recording_signal.connect(self.handle_stop_recording)
         self.full_data_page.show()
 
         for entry in self.recorded_data:
-            self.full_data_page.update_table(entry[1]) 
+            self.full_data_page.update_table(entry[1], entry[2]) 
 
-    def update_table(self, water_level):
-        self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), water_level))
+    def update_table(self, gain_voltage, phase_voltage):
+        self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), gain_voltage, phase_voltage))
         if self.full_data_page:
-            self.full_data_page.update_table(water_level)
+            self.full_data_page.update_table(gain_voltage, phase_voltage)
 
     def update_full_data_page(self, water_level):
         if self.full_data_page:
