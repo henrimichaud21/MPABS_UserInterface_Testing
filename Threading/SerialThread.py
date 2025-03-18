@@ -1,12 +1,15 @@
 import serial
 from PyQt5.QtCore import *
 
+# Define port that is being used
+Port_Name = "COM4"
+
 class SerialThread(QObject):
     data_received = pyqtSignal(float, float)
 
     def __init__(self, baudrate=9600):
         super().__init__()
-        self.port = "COM4"
+        self.port = Port_Name
         self.baudrate = baudrate
         self.running = True
         self.serial_connection = None
