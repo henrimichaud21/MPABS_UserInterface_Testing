@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 Port_Name = "COM4"
 
 class SerialThread(QObject):
-    data_received = pyqtSignal(float, float)
+    data_received = pyqtSignal(float)
 
     def __init__(self, baudrate=9600):
         super().__init__()
@@ -18,26 +18,20 @@ class SerialThread(QObject):
         try:
             self.serial_connection = serial.Serial(self.port, self.baudrate, timeout=1)
             while self.running:
-                phase_voltage = None
-                gain_voltage = None
-                
-                if self.serial_connection.in_waiting >= 4:  # 32-bit data
-                    data = self.serial_connection.read(4)  # Read 4 bytes (32 bits)
-                    phase_value = int.from_bytes(data[:2], "big")  # First 16 bits
-                    gain_value = int.from_bytes(data[2:], "big")  # Last 16 bits
+                value = None  # Ensure `value` is initialized first
 
-                    # Convert to voltage
-                    phase_voltage = round((phase_value * 3.3) / 4096, 3)
-                    gain_voltage = round((gain_value * 3.3) / 4096, 3)
+                if self.serial_connection.in_waiting > 0:
+                    data = self.serial_connection.read(1)  # Read 1 byte
+                    value = int.from_bytes(data, "big")  # Convert to integer
 
-                    # Emit both values
-                    self.data_received.emit(phase_voltage, gain_voltage)
-
+                # Ensure value is not None before performing operations on it
+                if value is not None and value % 2 == 0:
+                    self.data_received.emit(value // 2)  # Send processed data to UI
         except serial.SerialException as e:
             print(f"Serial error: {e}")
         finally:
             if self.serial_connection and self.serial_connection.is_open:
                 self.serial_connection.close()
-
+    
     def stop(self):
         self.running = False

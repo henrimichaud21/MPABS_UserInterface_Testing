@@ -156,7 +156,7 @@ class HomePage(QWidget):
         self.full_data_page.show()
 
         for entry in self.recorded_data:
-            self.full_data_page.update_table(entry[1], entry[2]) 
+            self.full_data_page.update_full_data_page(entry[1]) 
 
     def update_table(self, gain_voltage, phase_voltage):
         self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), gain_voltage, phase_voltage))
@@ -164,8 +164,9 @@ class HomePage(QWidget):
             self.full_data_page.update_table(gain_voltage, phase_voltage)
 
     def update_full_data_page(self, water_level):
+        self.recorded_data.append((datetime.now().strftime("%H:%M:%S"), water_level))
         if self.full_data_page:
-            self.full_data_page.update_table(water_level) 
+            self.full_data_page.update_full_data_page(water_level) 
     
     def open_reference_page(self):
         self.referencepoint_btn = ReferencePointPage(self.current_reference_point)
@@ -183,7 +184,7 @@ class HomePage(QWidget):
         if self.serial_thread is None:
             self.serial_thread = True
             self.serial_thread = SerialThread()
-            self.serial_thread.data_received.connect(self.update_table)
+            self.serial_thread.data_received.connect(self.update_full_data_page)
             self.thread = threading.Thread(target=self.serial_thread.run)
             self.thread.start()
 
