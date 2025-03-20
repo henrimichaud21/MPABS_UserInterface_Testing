@@ -87,8 +87,8 @@ void UART2_Initialize(void)
     // TXPOL not inverted; FLO off; RXPOL not inverted; RUNOVF RX input shifter stops all activity; STP Transmit 1Stop bit, receiver verifies first Stop bit; 
     U2CON2 = 0x00;
 
-    // BRGL 25; 
-    U2BRGL = 0x19;
+    // BRGL 138; 
+    U2BRGL = 0x8A;
 
     // BRGH 0; 
     U2BRGH = 0x00;
@@ -167,7 +167,7 @@ void UART2_Write(uint8_t txData)
     U2TXB = txData;    // Write the data byte to the USART.
 }
 
-char getch(void)
+int getch(void)
 {
     return UART2_Read();
 }

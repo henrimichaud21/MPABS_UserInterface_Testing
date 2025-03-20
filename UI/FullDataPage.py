@@ -19,7 +19,7 @@ class FullDataPage(QWidget):
         self.table.setColumnCount(2)
         self.table.setFixedSize(600, 600)
         self.table.move(50,75)
-        self.table.setHorizontalHeaderLabels(["Time", "Water Level (cm)"])
+        self.table.setHorizontalHeaderLabels(["Time", "Phase Voltage (V)"])
         self.table.setColumnWidth(0, 300)
         self.table.setColumnWidth(1, 300)
 

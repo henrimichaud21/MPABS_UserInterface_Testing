@@ -101,25 +101,45 @@
 #define RB7_SetAnalogMode()         do { ANSELBbits.ANSELB7 = 1; } while(0)
 #define RB7_SetDigitalMode()        do { ANSELBbits.ANSELB7 = 0; } while(0)
 
-// get/set IO_RC1 aliases
-#define IO_RC1_TRIS                 TRISCbits.TRISC1
-#define IO_RC1_LAT                  LATCbits.LATC1
-#define IO_RC1_PORT                 PORTCbits.RC1
-#define IO_RC1_WPU                  WPUCbits.WPUC1
-#define IO_RC1_OD                   ODCONCbits.ODCC1
-#define IO_RC1_ANS                  ANSELCbits.ANSELC1
-#define IO_RC1_SetHigh()            do { LATCbits.LATC1 = 1; } while(0)
-#define IO_RC1_SetLow()             do { LATCbits.LATC1 = 0; } while(0)
-#define IO_RC1_Toggle()             do { LATCbits.LATC1 = ~LATCbits.LATC1; } while(0)
-#define IO_RC1_GetValue()           PORTCbits.RC1
-#define IO_RC1_SetDigitalInput()    do { TRISCbits.TRISC1 = 1; } while(0)
-#define IO_RC1_SetDigitalOutput()   do { TRISCbits.TRISC1 = 0; } while(0)
-#define IO_RC1_SetPullup()          do { WPUCbits.WPUC1 = 1; } while(0)
-#define IO_RC1_ResetPullup()        do { WPUCbits.WPUC1 = 0; } while(0)
-#define IO_RC1_SetPushPull()        do { ODCONCbits.ODCC1 = 0; } while(0)
-#define IO_RC1_SetOpenDrain()       do { ODCONCbits.ODCC1 = 1; } while(0)
-#define IO_RC1_SetAnalogMode()      do { ANSELCbits.ANSELC1 = 1; } while(0)
-#define IO_RC1_SetDigitalMode()     do { ANSELCbits.ANSELC1 = 0; } while(0)
+// get/set channel_ANC1 aliases
+#define channel_ANC1_TRIS                 TRISCbits.TRISC1
+#define channel_ANC1_LAT                  LATCbits.LATC1
+#define channel_ANC1_PORT                 PORTCbits.RC1
+#define channel_ANC1_WPU                  WPUCbits.WPUC1
+#define channel_ANC1_OD                   ODCONCbits.ODCC1
+#define channel_ANC1_ANS                  ANSELCbits.ANSELC1
+#define channel_ANC1_SetHigh()            do { LATCbits.LATC1 = 1; } while(0)
+#define channel_ANC1_SetLow()             do { LATCbits.LATC1 = 0; } while(0)
+#define channel_ANC1_Toggle()             do { LATCbits.LATC1 = ~LATCbits.LATC1; } while(0)
+#define channel_ANC1_GetValue()           PORTCbits.RC1
+#define channel_ANC1_SetDigitalInput()    do { TRISCbits.TRISC1 = 1; } while(0)
+#define channel_ANC1_SetDigitalOutput()   do { TRISCbits.TRISC1 = 0; } while(0)
+#define channel_ANC1_SetPullup()          do { WPUCbits.WPUC1 = 1; } while(0)
+#define channel_ANC1_ResetPullup()        do { WPUCbits.WPUC1 = 0; } while(0)
+#define channel_ANC1_SetPushPull()        do { ODCONCbits.ODCC1 = 0; } while(0)
+#define channel_ANC1_SetOpenDrain()       do { ODCONCbits.ODCC1 = 1; } while(0)
+#define channel_ANC1_SetAnalogMode()      do { ANSELCbits.ANSELC1 = 1; } while(0)
+#define channel_ANC1_SetDigitalMode()     do { ANSELCbits.ANSELC1 = 0; } while(0)
+
+// get/set channel_ANC2 aliases
+#define channel_ANC2_TRIS                 TRISCbits.TRISC2
+#define channel_ANC2_LAT                  LATCbits.LATC2
+#define channel_ANC2_PORT                 PORTCbits.RC2
+#define channel_ANC2_WPU                  WPUCbits.WPUC2
+#define channel_ANC2_OD                   ODCONCbits.ODCC2
+#define channel_ANC2_ANS                  ANSELCbits.ANSELC2
+#define channel_ANC2_SetHigh()            do { LATCbits.LATC2 = 1; } while(0)
+#define channel_ANC2_SetLow()             do { LATCbits.LATC2 = 0; } while(0)
+#define channel_ANC2_Toggle()             do { LATCbits.LATC2 = ~LATCbits.LATC2; } while(0)
+#define channel_ANC2_GetValue()           PORTCbits.RC2
+#define channel_ANC2_SetDigitalInput()    do { TRISCbits.TRISC2 = 1; } while(0)
+#define channel_ANC2_SetDigitalOutput()   do { TRISCbits.TRISC2 = 0; } while(0)
+#define channel_ANC2_SetPullup()          do { WPUCbits.WPUC2 = 1; } while(0)
+#define channel_ANC2_ResetPullup()        do { WPUCbits.WPUC2 = 0; } while(0)
+#define channel_ANC2_SetPushPull()        do { ODCONCbits.ODCC2 = 0; } while(0)
+#define channel_ANC2_SetOpenDrain()       do { ODCONCbits.ODCC2 = 1; } while(0)
+#define channel_ANC2_SetAnalogMode()      do { ANSELCbits.ANSELC2 = 1; } while(0)
+#define channel_ANC2_SetDigitalMode()     do { ANSELCbits.ANSELC2 = 0; } while(0)
 
 // get/set Slave2 aliases
 #define Slave2_TRIS                 TRISCbits.TRISC4
